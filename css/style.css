@@ -1,0 +1,22 @@
+.container {
+  width: 80%;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 20px;
+}
+
+#chartContainer {
+  position: relative;
+}
+/* #chart {
+  border: 1px solid black;
+}
+
+#chartYear {
+  position: absolute;
+  top: calc(50% - 15px);
+  left: calc(50% - 30px);
+  font-size: 30px;
+} */

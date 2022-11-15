@@ -8,14 +8,18 @@
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
-    <h1>
-      <span id="thisyear"></span>年 は <span id="pastdays">100</span>日
-      が経過しました。 残り日数は <span id="leftdays">55</span>日 です。
-    </h1>
-    <div>
-      <canvas id="myChart"></canvas>
+    <div class="container">
+      <h1>
+        <span id="thisyear"></span>年 は <span id="pastdays"></span>
+        が経過しました。
+      </h1>
+      <h1>残り <span id="leftdays"></span> です。</h1>
+      <div id="chartContainer">
+        <canvas id="chart"></canvas>
+        <!-- <div id="chartYear">2022</div> -->
+      </div>
     </div>
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="js/script.js"></script>
   </body>
