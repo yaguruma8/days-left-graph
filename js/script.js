@@ -21,7 +21,7 @@ const leftDays = thisYearDays - pastDays;
 // todo: 0:00の時に23時間60分になるので修正考えること
 const leftHours = 23 - now.getHours();
 const leftMinutes = 60 - now.getMinutes();
-const leftTimeString = `${leftHours} 時間 ${leftMinutes} 分`
+const leftTimeString = `${leftHours} 時間 ${leftMinutes} 分`;
 // 経過％を計算
 const pastPar = ((pastDays / thisYearDays) * 100).toFixed(1);
 // 残り％を計算
@@ -35,23 +35,19 @@ leftDaysElement.textContent = `${String(
   leftDays
 )} 日 と ${leftTimeString} (${leftPar}%)`;
 
-// グラフの表示 (chart.js)
-// データの作成
+// グラフデータの作成
 let labels = [];
 let data = [];
 let backgroundColor = [];
 let past = pastDays;
 for (let i = 1; i <= 12; i++) {
   const thisMonthDays = new Date(thisYear, i, 0).getDate();
-  // pastが残り0日以下 = left
-  // pastが残り0日より大きく、thisMonthDays以下 = pastとleft
   // pastがthisMonthDaysより大きい = past
+  // pastが残り0日より大きく、thisMonthDays以下 = pastとleft
+  // pastが残り0日以下 = left
   if (past > thisMonthDays) {
     labels.push(`${i}月`);
-    labels.push('');
     data.push(thisMonthDays);
-    data.push(0);
-    backgroundColor.push(BG_COLOR_PAST);
     backgroundColor.push(BG_COLOR_PAST);
   } else if (past > 0 && past <= thisMonthDays) {
     labels.push(`${i}月`);
@@ -61,16 +57,14 @@ for (let i = 1; i <= 12; i++) {
     backgroundColor.push(BG_COLOR_PAST);
     backgroundColor.push(BG_COLOR_LEFT);
   } else {
-    labels.push('');
     labels.push(`${i}月`);
-    data.push(0);
     data.push(thisMonthDays);
-    backgroundColor.push(BG_COLOR_LEFT);
     backgroundColor.push(BG_COLOR_LEFT);
   }
   past -= thisMonthDays;
 }
 
+// グラフの表示 (chart.js)
 const ctx = document.getElementById('chart');
 new Chart(ctx, {
   type: 'doughnut',
@@ -81,6 +75,7 @@ new Chart(ctx, {
         label: 'days left in the year',
         data: data,
         backgroundColor: backgroundColor,
+        borderWidth: 1,
         hoverOffset: 0,
       },
     ],
@@ -94,6 +89,8 @@ new Chart(ctx, {
     },
   },
 });
+
+// ユーティリティ関数
 
 // 一年の経過日数を返す
 function getPastDays(date) {
