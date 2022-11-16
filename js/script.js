@@ -1,21 +1,21 @@
 'use strict';
 // 定数
 // グラフの色
+// 参考 : https://iro-color.com/colorchart/tone/vivid-tone.html
 const BG_COLORS = {
-  1: { past: 'lightgray', left: 'pink' },
-  2: { past: 'lightgray', left: 'pink' },
-  3: { past: 'lightgray', left: 'pink' },
-  4: { past: 'lightgray', left: 'pink' },
-  5: { past: 'lightgray', left: 'pink' },
-  6: { past: 'lightgray', left: 'pink' },
-  7: { past: 'lightgray', left: 'pink' },
-  8: { past: 'lightgray', left: 'pink' },
-  9: { past: 'lightgray', left: 'pink' },
-  10: { past: 'lightgray', left: 'pink' },
-  11: { past: 'lightgray', left: 'pink' },
-  12: { past: 'lightgray', left: 'pink' },
+  1: { past: '#FBDAC8', left: '#EA5532' },
+  2: { past: '#FEECD2', left: '#F6AD3C' },
+  3: { past: '#FFFCDB', left: '#FFF33F' },
+  4: { past: '#ECF4D9', left: '#AACF52' },
+  5: { past: '#D5EAD8', left: '#00A95F' },
+  6: { past: '#D4ECEA', left: '#00ADA9' },
+  7: { past: '#D3EDFB', left: '#00AFEC' },
+  8: { past: '#D3DEF1', left: '#187FC4' },
+  9: { past: '#D2CCE6', left: '#4D4398' },
+  10: { past: '#E7D5E8', left: '#A64A97' },
+  11: { past: '#FADCE9', left: '#E85298' },
+  12: { past: '#FADBDA', left: '#E9546B' },
 };
-
 
 // 要素の取得
 const thisYearElement = document.querySelector('#thisyear');
