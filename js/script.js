@@ -20,7 +20,7 @@ const BG_COLORS = {
 // 要素の取得
 const thisYearElement = document.querySelector('#thisyear');
 const pastDaysElement = document.querySelector('#pastdays');
-const leftTimeElement = document.querySelector('#lefttime');
+const leftDaysElement = document.querySelector('#leftdays');
 
 // 日付の計算
 const now = new Date();
@@ -29,14 +29,12 @@ const thisYearDays = getThisYearDays(isLeapYear(now));
 
 // 経過日数を計算
 const pastDays = getPastDays(now);
-const pastDaysString = `${pastDays} 日`
+const pastDaysString = `${pastDays} 日`;
 
 // 残り日数と時間を計算
 const leftDays = thisYearDays - pastDays;
-const leftTime = 60 * 24 - 60 * now.getHours() - now.getMinutes();
-const leftHours = Math.floor(leftTime / 60);
-const leftMinutes = leftTime - leftHours * 60;
-const leftTimeString = getLeftTimeString(leftDays, leftHours, leftMinutes);
+const [leftHours, leftMinutes] = getLeftHoursAndMinutes()
+const leftDaysString = getLeftDaysString(leftDays, leftHours, leftMinutes);
 
 // 経過％を計算
 // todo: 時間も含めて計算する
@@ -48,7 +46,7 @@ console.log(pastDays, leftDays, pastPar, leftPar);
 // 要素のtextContentに表示
 thisYearElement.textContent = String(thisYear);
 pastDaysElement.textContent = `${pastDaysString} (${pastPar}%)`;
-leftTimeElement.textContent = `${leftTimeString} (${leftPar}%)`;
+leftDaysElement.textContent = `${leftDaysString} (${leftPar}%)`;
 
 // グラフデータの作成
 let labels = [];
@@ -130,8 +128,15 @@ function getThisYearDays(isLeapYear) {
   return isLeapYear ? 366 : 365;
 }
 
+function getLeftHoursAndMinutes() {
+  const leftTime = 60 * 24 - 60 * now.getHours() - now.getMinutes();
+  const leftHours = Math.floor(leftTime / 60);
+  const leftMinutes = leftTime - leftHours * 60;
+  return [leftHours, leftMinutes];
+}
+
 // 残り時間の文字列を組み立てる
-function getLeftTimeString(day, hour, minute) {
+function getLeftDaysString(day, hour, minute) {
   // 0時0分 : 残り(x)日, 0時1分: 残り(x-1)日と23時間59分
   // 1時0分: 残り(x-1)日と23時間, 1時1分: 残り(x-1)日と22時間59分
   if (hour === 0 && minute === 0) {

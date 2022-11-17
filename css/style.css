@@ -1,22 +1,25 @@
 .container {
-  width: 500px;
+  width: 768px;
   margin: 0 auto;
+  padding: 10px 20px;
 }
 
-h1 {
+.text {
   font-size: 20px;
+  margin-bottom: 8px;
 }
 
 #chartContainer {
-  position: relative;
-}
-/* #chart {
-  border: 1px solid black;
+  width: 100%;
+  margin-top: 32px;
 }
 
-#chartYear {
-  position: absolute;
-  top: calc(50% - 15px);
-  left: calc(50% - 30px);
-  font-size: 30px;
-} */
+@media screen and (max-width: 767px) {
+  .container {
+    width: 100%;
+  }
+  h1 {
+    font-size: 20px;
+    line-height: 26px;
+  }
+}
