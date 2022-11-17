@@ -22,7 +22,7 @@ const thisYearElement = document.querySelector('#thisyear');
 const pastDaysElement = document.querySelector('#pastdays');
 const leftDaysElement = document.querySelector('#leftdays');
 
-// 日付の計算
+// 日付等の取得
 const now = new Date();
 const thisYear = now.getFullYear();
 const thisYearDays = getThisYearDays(isLeapYear(now));
@@ -146,10 +146,10 @@ function getLeftDaysString(day, hour, minute) {
   }
 }
 
+// 経過と残りの時間の割合を計算して返す
 function getPersentPastAndLeftTime(date) {
   const thisYearDays = getThisYearDays(isLeapYear(date));
   const pastDays = getPastDays(date);
-  // todo: 時刻も含める
   const pastPar = ((pastDays / thisYearDays) * 100).toFixed(1);
   const leftPar = (100 - Number(pastPar)).toFixed(1);
   return [pastPar, leftPar];
