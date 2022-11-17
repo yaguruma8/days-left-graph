@@ -20,7 +20,7 @@ const BG_COLORS = {
 // 要素の取得
 const thisYearElement = document.querySelector('#thisyear');
 const pastDaysElement = document.querySelector('#pastdays');
-const leftDaysElement = document.querySelector('#leftdays');
+const leftTimeElement = document.querySelector('#lefttime');
 
 // 日付の計算
 const now = new Date();
@@ -29,6 +29,7 @@ const thisYearDays = getThisYearDays(isLeapYear(now));
 
 // 経過日数を計算
 const pastDays = getPastDays(now);
+const pastDaysString = `${pastDays} 日`
 
 // 残り日数と時間を計算
 const leftDays = thisYearDays - pastDays;
@@ -38,6 +39,7 @@ const leftMinutes = leftTime - leftHours * 60;
 const leftTimeString = getLeftTimeString(leftDays, leftHours, leftMinutes);
 
 // 経過％を計算
+// todo: 時間も含めて計算する
 const pastPar = ((pastDays / thisYearDays) * 100).toFixed(1);
 // 残り％を計算
 const leftPar = (100 - Number(pastPar)).toFixed(1);
@@ -45,8 +47,8 @@ console.log(pastDays, leftDays, pastPar, leftPar);
 
 // 要素のtextContentに表示
 thisYearElement.textContent = String(thisYear);
-pastDaysElement.textContent = `${String(pastDays)} 日 (${pastPar}%)`;
-leftDaysElement.textContent = `${leftTimeString} (${leftPar}%)`;
+pastDaysElement.textContent = `${pastDaysString} (${pastPar}%)`;
+leftTimeElement.textContent = `${leftTimeString} (${leftPar}%)`;
 
 // グラフデータの作成
 let labels = [];
@@ -109,13 +111,12 @@ new Chart(ctx, {
 function getPastDays(date) {
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
-  const dateOfMonth = date.getDate();
-  let leftDays = 0;
+  let pastDays = 0;
   for (let i = 1; i < month; i++) {
-    leftDays += new Date(year, i, 0).getDate();
+    pastDays += new Date(year, i, 0).getDate();
   }
-  leftDays += dateOfMonth;
-  return leftDays;
+  pastDays += date.getDate();
+  return pastDays;
 }
 
 // 閏年の判定
