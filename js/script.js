@@ -141,21 +141,23 @@ function createGraphData(date) {
 
   for (let i = 1; i <= 12; i++) {
     const thisMonthDays = new Date(thisYear, i, 0).getDate();
-    // pastがthisMonthDaysより大きい = past
-    // pastが残り0日より大きく、thisMonthDays以下 = pastとleft
-    // pastが残り0日以下 = left
     if (pastDays > thisMonthDays) {
+      // 経過済みの月
       graphData.labels.push(`${i}月`);
       graphData.data.push(thisMonthDays);
       graphData.backgroundColors.push(BG_COLORS[i].past);
     } else if (pastDays > 0 && pastDays <= thisMonthDays) {
-      graphData.labels.push(`${i}月`);
+      // 経過中の月
+      // 経過済みの日
       graphData.labels.push(`${i}月`);
       graphData.data.push(pastDays);
-      graphData.data.push(thisMonthDays - pastDays);
       graphData.backgroundColors.push(BG_COLORS[i].past);
+      // まだ残っている日
+      graphData.labels.push(`${i}月`);
+      graphData.data.push(thisMonthDays - pastDays);
       graphData.backgroundColors.push(BG_COLORS[i].left);
     } else {
+      // まだ残っている月
       graphData.labels.push(`${i}月`);
       graphData.data.push(thisMonthDays);
       graphData.backgroundColors.push(BG_COLORS[i].left);
