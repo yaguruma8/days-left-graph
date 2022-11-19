@@ -50,30 +50,7 @@ leftDaysElement.textContent = `${leftDaysString} (${leftPar}%)`;
 const { labels, data, backgroundColors } = createGraphData(now);
 
 // グラフの表示 (chart.js)
-const ctx = document.getElementById('chart');
-new Chart(ctx, {
-  type: 'doughnut',
-  data: {
-    labels: labels,
-    datasets: [
-      {
-        label: 'days left in the year',
-        data: data,
-        backgroundColor: backgroundColors,
-        borderWidth: 1,
-        hoverOffset: 0,
-      },
-    ],
-  },
-  options: {
-    plugins: {
-      legend: {
-        // グラフのラベルを非表示にする（hoverでは表示される)
-        display: false,
-      },
-    },
-  },
-});
+drawGraph({ labels, data, backgroundColors });
 
 // ユーティリティ関数
 
@@ -124,8 +101,8 @@ function getLeftDaysString(day, hour, minute) {
 function getPersentPastAndLeftTime(date) {
   const thisYearDays = getThisYearDays(isLeapYear(date));
   const pastDays = getPastDays(date);
-  const pastPar = ((pastDays / thisYearDays) * 100).toFixed(1);
-  const leftPar = (100 - Number(pastPar)).toFixed(1);
+  const pastPar = ((pastDays / thisYearDays) * 100).toFixed(2);
+  const leftPar = (100 - Number(pastPar)).toFixed(2);
   return [pastPar, leftPar];
 }
 
@@ -165,4 +142,32 @@ function createGraphData(date) {
     pastDays -= thisMonthDays;
   }
   return graphData;
+}
+
+// グラフの描画
+function drawGraph(graphData) {
+  const ctx = document.getElementById('chart');
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'days left in the year',
+          data: data,
+          backgroundColor: backgroundColors,
+          borderWidth: 1,
+          hoverOffset: 0,
+        },
+      ],
+    },
+    options: {
+      plugins: {
+        legend: {
+          // グラフのラベルを非表示にする（hoverでは表示される)
+          display: false,
+        },
+      },
+    },
+  });
 }
