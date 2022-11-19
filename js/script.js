@@ -47,33 +47,7 @@ pastDaysElement.textContent = `${pastDaysString} (${pastPar}%)`;
 leftDaysElement.textContent = `${leftDaysString} (${leftPar}%)`;
 
 // グラフデータの作成
-let labels = [];
-let data = [];
-let backgroundColor = [];
-let past = pastDays;
-for (let i = 1; i <= 12; i++) {
-  const thisMonthDays = new Date(thisYear, i, 0).getDate();
-  // pastがthisMonthDaysより大きい = past
-  // pastが残り0日より大きく、thisMonthDays以下 = pastとleft
-  // pastが残り0日以下 = left
-  if (past > thisMonthDays) {
-    labels.push(`${i}月`);
-    data.push(thisMonthDays);
-    backgroundColor.push(BG_COLORS[i].past);
-  } else if (past > 0 && past <= thisMonthDays) {
-    labels.push(`${i}月`);
-    labels.push(`${i}月`);
-    data.push(past);
-    data.push(thisMonthDays - past);
-    backgroundColor.push(BG_COLORS[i].past);
-    backgroundColor.push(BG_COLORS[i].left);
-  } else {
-    labels.push(`${i}月`);
-    data.push(thisMonthDays);
-    backgroundColor.push(BG_COLORS[i].left);
-  }
-  past -= thisMonthDays;
-}
+const { labels, data, backgroundColors } = createGraphData(now);
 
 // グラフの表示 (chart.js)
 const ctx = document.getElementById('chart');
@@ -85,7 +59,7 @@ new Chart(ctx, {
       {
         label: 'days left in the year',
         data: data,
-        backgroundColor: backgroundColor,
+        backgroundColor: backgroundColors,
         borderWidth: 1,
         hoverOffset: 0,
       },
@@ -153,4 +127,40 @@ function getPersentPastAndLeftTime(date) {
   const pastPar = ((pastDays / thisYearDays) * 100).toFixed(1);
   const leftPar = (100 - Number(pastPar)).toFixed(1);
   return [pastPar, leftPar];
+}
+
+// グラフデータの作成
+function createGraphData(date) {
+  const graphData = {
+    labels: [],
+    data: [],
+    backgroundColors: [],
+  };
+  const thisYear = date.getFullYear();
+  let pastDays = getPastDays(date);
+
+  for (let i = 1; i <= 12; i++) {
+    const thisMonthDays = new Date(thisYear, i, 0).getDate();
+    // pastがthisMonthDaysより大きい = past
+    // pastが残り0日より大きく、thisMonthDays以下 = pastとleft
+    // pastが残り0日以下 = left
+    if (pastDays > thisMonthDays) {
+      graphData.labels.push(`${i}月`);
+      graphData.data.push(thisMonthDays);
+      graphData.backgroundColors.push(BG_COLORS[i].past);
+    } else if (pastDays > 0 && pastDays <= thisMonthDays) {
+      graphData.labels.push(`${i}月`);
+      graphData.labels.push(`${i}月`);
+      graphData.data.push(pastDays);
+      graphData.data.push(thisMonthDays - pastDays);
+      graphData.backgroundColors.push(BG_COLORS[i].past);
+      graphData.backgroundColors.push(BG_COLORS[i].left);
+    } else {
+      graphData.labels.push(`${i}月`);
+      graphData.data.push(thisMonthDays);
+      graphData.backgroundColors.push(BG_COLORS[i].left);
+    }
+    pastDays -= thisMonthDays;
+  }
+  return graphData;
 }
