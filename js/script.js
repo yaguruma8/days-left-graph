@@ -47,10 +47,10 @@ pastDaysElement.textContent = `${pastDaysString} (${pastPar}%)`;
 leftDaysElement.textContent = `${leftDaysString} (${leftPar}%)`;
 
 // グラフデータの作成
-const { labels, data, backgroundColors } = createGraphData(now);
+const graphData = createGraphData(now);
 
 // グラフの表示 (chart.js)
-drawGraph({ labels, data, backgroundColors });
+drawGraph(graphData);
 
 // ユーティリティ関数
 
@@ -146,7 +146,9 @@ function createGraphData(date) {
 
 // グラフの描画
 function drawGraph(graphData) {
+  const { labels, data, backgroundColors } = graphData;
   const ctx = document.getElementById('chart');
+  // chart.js
   new Chart(ctx, {
     type: 'doughnut',
     data: {
