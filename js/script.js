@@ -33,11 +33,11 @@ const pastDaysString = `${pastDays} 日`;
 
 // 残り日数と時間を計算
 const leftDays = thisYearDays - pastDays;
-const [leftHours, leftMinutes] = getLeftHoursAndMinutes();
-const leftDaysString = getLeftDaysString(leftDays, leftHours, leftMinutes);
+const leftTime = getLeftTime(now);
+const leftDaysString = getLeftDaysString(leftDays, leftTime);
 
 // 経過％と残り％を計算
-const [pastPar, leftPar] = getPersentPastAndLeftTime(now);
+const { pastPar, leftPar } = getPersentPastAndLeftTime(now);
 
 console.log(pastDays, leftDays, pastPar, leftPar);
 
@@ -77,23 +77,24 @@ function getThisYearDays(isLeapYear) {
   return isLeapYear ? 366 : 365;
 }
 
-function getLeftHoursAndMinutes() {
-  const leftTime = 60 * 24 - 60 * now.getHours() - now.getMinutes();
-  const leftHours = Math.floor(leftTime / 60);
-  const leftMinutes = leftTime - leftHours * 60;
-  return [leftHours, leftMinutes];
+function getLeftTime(date) {
+  const time = 60 * 24 - 60 * date.getHours() - date.getMinutes();
+  const hour = Math.floor(time / 60);
+  const minute = time - hour * 60;
+  return { hour, minute };
 }
 
 // 残り時間の文字列を組み立てる
-function getLeftDaysString(day, hour, minute) {
+function getLeftDaysString(leftDays, time) {
+  const { hour, minute } = time;
   // 0時0分 : 残り(x)日, 0時1分: 残り(x-1)日と23時間59分
   // 1時0分: 残り(x-1)日と23時間, 1時1分: 残り(x-1)日と22時間59分
   if (hour === 0 && minute === 0) {
-    return `${day} 日`;
+    return `${leftDays} 日`;
   } else if (minute === 0) {
-    return `${day - 1} 日 と ${hour} 時間`;
+    return `${leftDays - 1} 日 と ${hour} 時間`;
   } else {
-    return `${day - 1} 日 と ${hour} 時間 ${minute} 分`;
+    return `${leftDays - 1} 日 と ${hour} 時間 ${minute} 分`;
   }
 }
 
@@ -103,7 +104,7 @@ function getPersentPastAndLeftTime(date) {
   const pastDays = getPastDays(date);
   const pastPar = ((pastDays / thisYearDays) * 100).toFixed(2);
   const leftPar = (100 - Number(pastPar)).toFixed(2);
-  return [pastPar, leftPar];
+  return { pastPar, leftPar };
 }
 
 // グラフデータの作成
