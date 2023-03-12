@@ -40,7 +40,8 @@ pastTimeEl.textContent = `
 leftTimeEl.textContent = `残り ${leftDaysString} (${leftPerString}%) です。`;
 
 // グラフデータの作成と描画
-const graphData = createGraphData(now);
+const today = new Date();
+const graphData = createGraphData(today);
 drawGraph(graphData);
 
 // -----------------------------------------------
