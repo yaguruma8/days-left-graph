@@ -17,97 +17,121 @@ const BG_COLORS = {
   12: { past: '#FADBDA', left: '#E9546B' },
 };
 
+// 現在時刻
+const now = new Date();
+
+// 経過した日数と経過％
+const pastDaysString = String(getPastDays(now));
+const pastPerString = getPastPerString(now);
+
+// 残り日数及び時間と残り％
+const leftDaysString = getLeftTimeString(getLeftDays(now), getLeftTime(now));
+const leftPerString = getLeftPerString(now);
+
 // 要素の取得
 const pastTimeEl = document.querySelector('#pasttime');
 const leftTimeEl = document.querySelector('#lefttime');
 
-// 日付等の取得
-const now = new Date();
-const thisYear = now.getFullYear();
-const thisYearDays = getThisYearDays(isLeapYear(now));
-
-// 経過日数を計算
-const pastDays = getPastDays(now);
-const pastDaysString = `${pastDays} 日`;
-
-// 残り日数と時間を計算
-const leftDays = thisYearDays - pastDays;
-const leftTime = getLeftTime(now);
-const leftDaysString = getLeftDaysString(leftDays, leftTime);
-
-// 経過％と残り％を計算
-const { pastPar, leftPar } = getPersentPastAndLeftTime(now);
-
-console.log(pastDays, leftDays, pastPar, leftPar);
-
 // 要素のtextContentに表示
 pastTimeEl.textContent = `
-  ${String(thisYear)} 年は
-  ${pastDaysString} (${pastPar}%) が経過しました。`;
-leftTimeEl.textContent = `残り ${leftDaysString} (${leftPar}%) です。`;
+  ${String(now.getFullYear())} 年は
+  ${pastDaysString} 日 (${pastPerString}%) が経過しました。
+  `;
+leftTimeEl.textContent = `残り ${leftDaysString} (${leftPerString}%) です。`;
 
-// グラフデータの作成
+// グラフデータの作成と描画
 const graphData = createGraphData(now);
-
-// グラフの表示 (chart.js)
 drawGraph(graphData);
 
+// -----------------------------------------------
 // ユーティリティ関数
+// -----------------------------------------------
 
-// 一年の経過日数を返す
-function getPastDays(date) {
+/**
+ * その年の一年の日数を返す
+ * @param {Date} date 今日
+ * @returns {number} 今年の日数
+ */
+function getThisYearDays(date) {
   const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  let pastDays = 0;
-  for (let i = 1; i < month; i++) {
-    pastDays += new Date(year, i, 0).getDate();
-  }
-  pastDays += date.getDate();
-  return pastDays;
-}
-
-// 閏年の判定
-function isLeapYear(date) {
-  const year = date.getFullYear();
-  return new Date(year, 2, 0).getDate() === 29;
-}
-
-// その年の一年の日数を返す
-function getThisYearDays(isLeapYear) {
+  const isLeapYear = new Date(year, 2, 0).getDate() === 29;
   return isLeapYear ? 366 : 365;
 }
 
+/**
+ * その年の経過日数を返す
+ * @param {Date} date 今日
+ * @returns {number} 経過日数
+ */
+function getPastDays(date) {
+  const beginDate = new Date(date.getFullYear(), 0, 0);
+  const pastMS = date - beginDate;
+  return Math.floor(pastMS / 1000 / 60 / 60 / 24);
+}
+
+/**
+ * その年の経過％を返す
+ * @param {Date} date
+ * @returns {string} 経過％
+ */
+function getPastPerString(date) {
+  const pastMS = date - new Date(date.getFullYear(), 0, 0);
+  const fullMS = getThisYearDays(date) * 24 * 60 * 60 * 1000;
+  return ((pastMS / fullMS) * 100).toFixed(2);
+}
+
+/**
+ * その年の残り日数を返す
+ * @param {Date} date
+ * @returns {number} 残り日数
+ */
+function getLeftDays(date) {
+  return getThisYearDays(date) - getPastDays(date);
+}
+
+/**
+ * その年の残り時間を返す
+ * @param {Date} date
+ * @returns {object}
+ */
 function getLeftTime(date) {
-  const time = 60 * 24 - 60 * date.getHours() - date.getMinutes();
-  const hour = Math.floor(time / 60);
-  const minute = time - hour * 60;
-  return { hour, minute };
+  const hour = String(24 - date.getHours()).padStart(2, 0);
+  const min = String(60 - date.getMinutes()).padStart(2, 0);
+  const sec = String(60 - date.getSeconds()).padStart(2, 0);
+  return { hour, min, sec };
 }
 
-// 残り時間の文字列を組み立てる
-function getLeftDaysString(leftDays, time) {
-  const { hour, minute } = time;
-  // 0時0分 : 残り(x)日, 0時1分: 残り(x-1)日と23時間59分
-  // 1時0分: 残り(x-1)日と23時間, 1時1分: 残り(x-1)日と22時間59分
-  if (hour === 0 && minute === 0) {
-    return `${leftDays} 日`;
-  } else if (minute === 0) {
-    return `${leftDays - 1} 日 と ${hour} 時間`;
-  } else {
-    return `${leftDays - 1} 日 と ${hour} 時間 ${minute} 分`;
-  }
+/**
+ * その年の残り％を返す
+ * @param {Date} date
+ */
+function getLeftPerString(date) {
+  return (100 - Number(getPastPerString(date))).toFixed(2);
 }
 
-// 経過と残りの時間の割合を計算して返す
-function getPersentPastAndLeftTime(date) {
-  const thisYearDays = getThisYearDays(isLeapYear(date));
-  const pastDays = getPastDays(date);
-  const pastPar = ((pastDays / thisYearDays) * 100).toFixed(2);
-  const leftPar = (100 - Number(pastPar)).toFixed(2);
-  return { pastPar, leftPar };
+/**
+ * 残り日数、時間の文字列を組み立てて返す
+ * @param {number} leftDays
+ * @param {object} leftTime
+ * @returns {string}
+ */
+function getLeftTimeString(leftDays, leftTime) {
+  const { hour, min, sec } = leftTime;
+  const days = String(
+    hour === 0 && min === 0 ? leftDays : leftDays - 1
+  ).padStart(3, 0);
+  return `${days} 日と ${hour} 時間 ${min} 分 ${sec} 秒`;
 }
 
-// グラフデータの作成
+// -----------------------------------------------
+// グラフデータ
+// -----------------------------------------------
+
+/**
+ * グラフデータを作成
+ * @param {Date} date
+ * @returns {object} グラフデータ
+ */
 function createGraphData(date) {
   const graphData = {
     labels: [],
@@ -145,7 +169,10 @@ function createGraphData(date) {
   return graphData;
 }
 
-// グラフの描画
+// -----------------------------------------------
+// グラフの描画(chart.js)
+// -----------------------------------------------
+
 function drawGraph(graphData) {
   const { labels, data, backgroundColors } = graphData;
   const ctx = document.getElementById('chart');
