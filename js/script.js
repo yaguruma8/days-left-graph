@@ -92,7 +92,7 @@ function getLeftDays(date) {
 /**
  * その年の残り時間を返す
  * @param {Date} date
- * @returns {object}
+ * @returns {object} 残り時間（時、分、秒）
  */
 function getLeftTime(date) {
   const hour = String(24 - date.getHours()).padStart(2, 0);
@@ -102,25 +102,26 @@ function getLeftTime(date) {
 }
 
 /**
- * その年の残り％を返す
- * @param {Date} date
- */
-function getLeftPerString(date) {
-  return (100 - Number(getPastPerString(date))).toFixed(2);
-}
-
-/**
  * 残り日数、時間の文字列を組み立てて返す
  * @param {number} leftDays
  * @param {object} leftTime
- * @returns {string}
+ * @returns {string} 残り日数・時間
  */
 function getLeftTimeString(leftDays, leftTime) {
   const { hour, min, sec } = leftTime;
   const days = String(
     hour === 0 && min === 0 ? leftDays : leftDays - 1
-  ).padStart(3, 0);
-  return `${days} 日と ${hour} 時間 ${min} 分 ${sec} 秒`;
+  );
+  return `${days} 日 ${hour} 時間 ${min} 分 ${sec} 秒`;
+}
+
+/**
+ * その年の残り％を返す
+ * @param {Date} date
+ * @returns {string} 残り%
+ */
+function getLeftPerString(date) {
+  return (100 - Number(getPastPerString(date))).toFixed(2);
 }
 
 // -----------------------------------------------
