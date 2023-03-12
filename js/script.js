@@ -17,27 +17,39 @@ const BG_COLORS = {
   12: { past: '#FADBDA', left: '#E9546B' },
 };
 
-// 現在時刻
-const now = new Date();
+// 日数表示の描画
+const printDays = () => {
+  const now = new Date();
+  // 経過した日数と経過％
+  const pastDaysString = String(getPastDays(now));
+  const pastPerString = getPastPerString(now);
 
-// 経過した日数と経過％
-const pastDaysString = String(getPastDays(now));
-const pastPerString = getPastPerString(now);
+  // 残り日数及び時間と残り％
+  const leftDaysString = getLeftTimeString(getLeftDays(now), getLeftTime(now));
+  const leftPerString = getLeftPerString(now);
 
-// 残り日数及び時間と残り％
-const leftDaysString = getLeftTimeString(getLeftDays(now), getLeftTime(now));
-const leftPerString = getLeftPerString(now);
+  // 要素の取得
+  const pastTimeEl = document.querySelector('#pasttime');
+  const leftTimeEl = document.querySelector('#lefttime');
 
-// 要素の取得
-const pastTimeEl = document.querySelector('#pasttime');
-const leftTimeEl = document.querySelector('#lefttime');
+  // 要素のtextContentに表示
+  pastTimeEl.textContent = `
+    ${String(now.getFullYear())} 年は
+    ${pastDaysString} 日 (${pastPerString}%) が経過しました。
+    `;
+  leftTimeEl.textContent = `残り ${leftDaysString} (${leftPerString}%) です。`;
+};
 
-// 要素のtextContentに表示
-pastTimeEl.textContent = `
-  ${String(now.getFullYear())} 年は
-  ${pastDaysString} 日 (${pastPerString}%) が経過しました。
-  `;
-leftTimeEl.textContent = `残り ${leftDaysString} (${leftPerString}%) です。`;
+// 日数表示を1秒ごとに更新する 
+const timer = (func) => {
+  return new Promise((resolve) => {
+    setInterval(() => {
+      resolve(func());
+    }, 1000);
+  });
+};
+printDays();
+timer(printDays);
 
 // グラフデータの作成と描画
 const today = new Date();
@@ -110,9 +122,7 @@ function getLeftTime(date) {
  */
 function getLeftTimeString(leftDays, leftTime) {
   const { hour, min, sec } = leftTime;
-  const days = String(
-    hour === 0 && min === 0 ? leftDays : leftDays - 1
-  );
+  const days = String(hour === 0 && min === 0 ? leftDays : leftDays - 1);
   return `${days} 日 ${hour} 時間 ${min} 分 ${sec} 秒`;
 }
 
