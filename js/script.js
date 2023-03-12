@@ -18,9 +18,8 @@ const BG_COLORS = {
 };
 
 // 要素の取得
-const thisYearElement = document.querySelector('#thisyear');
-const pastDaysElement = document.querySelector('#pastdays');
-const leftDaysElement = document.querySelector('#leftdays');
+const pastTimeEl = document.querySelector('#pasttime');
+const leftTimeEl = document.querySelector('#lefttime');
 
 // 日付等の取得
 const now = new Date();
@@ -42,9 +41,10 @@ const { pastPar, leftPar } = getPersentPastAndLeftTime(now);
 console.log(pastDays, leftDays, pastPar, leftPar);
 
 // 要素のtextContentに表示
-thisYearElement.textContent = String(thisYear);
-pastDaysElement.textContent = `${pastDaysString} (${pastPar}%)`;
-leftDaysElement.textContent = `${leftDaysString} (${leftPar}%)`;
+pastTimeEl.textContent = `
+  ${String(thisYear)} 年は
+  ${pastDaysString} (${pastPar}%) が経過しました。`;
+leftTimeEl.textContent = `残り ${leftDaysString} (${leftPar}%) です。`;
 
 // グラフデータの作成
 const graphData = createGraphData(now);
