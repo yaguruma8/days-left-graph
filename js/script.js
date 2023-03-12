@@ -40,7 +40,7 @@ const printDays = () => {
   leftTimeEl.textContent = `残り ${leftDaysString} (${leftPerString}%) です。`;
 };
 
-// 日数表示を1秒ごとに更新する 
+// 日数表示を1秒ごとに更新する
 const timer = (func) => {
   return new Promise((resolve) => {
     setInterval(() => {
@@ -55,6 +55,7 @@ timer(printDays);
 const today = new Date();
 const graphData = createGraphData(today);
 drawGraph(graphData);
+// todo: 日付を跨いだときにグラフを描画し直す
 
 // -----------------------------------------------
 // ユーティリティ関数
@@ -90,7 +91,7 @@ function getPastDays(date) {
 function getPastPerString(date) {
   const pastMS = date - new Date(date.getFullYear(), 0, 0);
   const fullMS = getThisYearDays(date) * 24 * 60 * 60 * 1000;
-  return ((pastMS / fullMS) * 100).toFixed(2);
+  return ((pastMS / fullMS) * 100).toFixed(5);
 }
 
 /**
@@ -108,9 +109,9 @@ function getLeftDays(date) {
  * @returns {object} 残り時間（時、分、秒）
  */
 function getLeftTime(date) {
-  const hour = String(24 - date.getHours()).padStart(2, 0);
-  const min = String(60 - date.getMinutes()).padStart(2, 0);
-  const sec = String(60 - date.getSeconds()).padStart(2, 0);
+  const hour = String(23 - date.getHours()).padStart(2, 0);
+  const min = String(59 - date.getMinutes()).padStart(2, 0);
+  const sec = String(59 - date.getSeconds()).padStart(2, 0);
   return { hour, min, sec };
 }
 
@@ -132,7 +133,7 @@ function getLeftTimeString(leftDays, leftTime) {
  * @returns {string} 残り%
  */
 function getLeftPerString(date) {
-  return (100 - Number(getPastPerString(date))).toFixed(2);
+  return (100 - Number(getPastPerString(date))).toFixed(5);
 }
 
 // -----------------------------------------------
