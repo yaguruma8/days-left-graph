@@ -66,7 +66,6 @@ window.setInterval(() => {
   printGraph(now);
 }, 1000);
 
-
 // -----------------------------------------------
 // ユーティリティ関数
 // -----------------------------------------------
@@ -151,45 +150,31 @@ function getLeftPerString(date) {
 // -----------------------------------------------
 
 /**
- * グラフデータを作成
+ * グラフデータを作成する
  * @param {Date} date
  * @returns {object} グラフデータ
  */
 function createGraphData(date) {
-  const graphData = {
-    labels: [],
-    data: [],
-    backgroundColors: [],
-  };
-  const thisYear = date.getFullYear();
-  let pastDays = getPastDays(date);
+  const labels = [];
+  const data = [];
+  const backgroundColors = [];
 
-  for (let i = 1; i <= 12; i++) {
-    const thisMonthDays = new Date(thisYear, i, 0).getDate();
-    if (pastDays > thisMonthDays) {
-      // 経過済みの月
-      graphData.labels.push(`${i}月`);
-      graphData.data.push(thisMonthDays);
-      graphData.backgroundColors.push(BG_COLORS[i].past);
-    } else if (pastDays > 0 && pastDays <= thisMonthDays) {
-      // 経過中の月
-      // 経過済みの日
-      graphData.labels.push(`${i}月`);
-      graphData.data.push(pastDays);
-      graphData.backgroundColors.push(BG_COLORS[i].past);
-      // まだ残っている日
-      graphData.labels.push(`${i}月`);
-      graphData.data.push(thisMonthDays - pastDays);
-      graphData.backgroundColors.push(BG_COLORS[i].left);
+  for (let i = 0; i < 12; i++) {
+    if (i === date.getMonth()) {
+      // 当月の場合はpastとleftで色分けする
+      const daysInMonth = new Date(date.getFullYear(), i + 1, 0).getDate();
+      labels.push(`${i + 1}月`, `${i + 1}月`);
+      data.push(date.getDate(), daysInMonth - date.getDate());
+      backgroundColors.push(BG_COLORS[i + 1].past, BG_COLORS[i + 1].left);
     } else {
-      // まだ残っている月
-      graphData.labels.push(`${i}月`);
-      graphData.data.push(thisMonthDays);
-      graphData.backgroundColors.push(BG_COLORS[i].left);
+      const daysInMonth = new Date(date.getFullYear(), i + 1, 0).getDate();
+      const colorLabel = i < date.getMonth() ? 'past' : 'left';
+      labels.push(`${i + 1}月`);
+      data.push(daysInMonth);
+      backgroundColors.push(BG_COLORS[i + 1][colorLabel]);
     }
-    pastDays -= thisMonthDays;
   }
-  return graphData;
+  return { labels, data, backgroundColors };
 }
 
 // -----------------------------------------------
@@ -197,8 +182,8 @@ function createGraphData(date) {
 // -----------------------------------------------
 
 /**
- * 
- * @param {object} graphData 
+ * グラフを描画する
+ * @param {object} graphData
  * @returns {Chart} chartオブジェクト
  */
 function drawGraph(graphData) {
