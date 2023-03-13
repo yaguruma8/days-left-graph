@@ -17,45 +17,55 @@ const BG_COLORS = {
   12: { past: '#FADBDA', left: '#E9546B' },
 };
 
-// 日数表示の描画
-const printDays = () => {
-  const now = new Date();
-  // 経過した日数と経過％
-  const pastDaysString = String(getPastDays(now));
-  const pastPerString = getPastPerString(now);
-
-  // 残り日数及び時間と残り％
-  const leftDaysString = getLeftTimeString(getLeftDays(now), getLeftTime(now));
-  const leftPerString = getLeftPerString(now);
-
-  // 要素の取得
-  const pastTimeEl = document.querySelector('#pasttime');
-  const leftTimeEl = document.querySelector('#lefttime');
-
-  // 要素のtextContentに表示
-  pastTimeEl.textContent = `
-    ${String(now.getFullYear())} 年は
+// 日数表示の生成と描画
+const printDates = (date) => {
+  // 経過日数
+  const pastDaysString = String(getPastDays(date));
+  const pastPerString = getPastPerString(date);
+  // 残り日数
+  const leftDaysString = getLeftTimeString(
+    getLeftDays(date),
+    getLeftTime(date)
+  );
+  const leftPerString = getLeftPerString(date);
+  // 要素を取得して表示
+  document.querySelector('#pasttime').textContent = `
+    ${String(date.getFullYear())} 年は
     ${pastDaysString} 日 (${pastPerString}%) が経過しました。
     `;
-  leftTimeEl.textContent = `残り ${leftDaysString} (${leftPerString}%) です。`;
+  document.querySelector('#lefttime').textContent = `
+    残り ${leftDaysString} (${leftPerString}%) です。
+    `;
 };
 
-// 日数表示を1秒ごとに更新する
-const timer = (func) => {
-  return new Promise((resolve) => {
-    setInterval(() => {
-      resolve(func());
-    }, 1000);
-  });
+// グラフデータの生成と描画
+const printGraphClosure = (date) => {
+  let today = date;
+  const graphData = createGraphData(today);
+  let chart = drawGraph(graphData);
+  return (date) => {
+    // 日付が変わった場合todayをdateで上書きしてグラフを再描画する
+    if (today.getDate() !== date.getDate()) {
+      today = date;
+      const graphData = createGraphData(today);
+      chart.destroy();
+      chart = drawGraph(graphData);
+    }
+  };
 };
-printDays();
-timer(printDays);
 
-// グラフデータの作成と描画
+// 初期描画
 const today = new Date();
-const graphData = createGraphData(today);
-drawGraph(graphData);
-// todo: 日付を跨いだときにグラフを描画し直す
+printDates(today);
+const printGraph = printGraphClosure(today);
+
+// 1秒ごとに更新
+window.setInterval(() => {
+  const now = new Date();
+  printDates(now);
+  printGraph(now);
+}, 1000);
+
 
 // -----------------------------------------------
 // ユーティリティ関数
@@ -186,11 +196,16 @@ function createGraphData(date) {
 // グラフの描画(chart.js)
 // -----------------------------------------------
 
+/**
+ * 
+ * @param {object} graphData 
+ * @returns {Chart} chartオブジェクト
+ */
 function drawGraph(graphData) {
   const { labels, data, backgroundColors } = graphData;
   const ctx = document.getElementById('chart');
   // chart.js
-  new Chart(ctx, {
+  const chart = new Chart(ctx, {
     type: 'doughnut',
     data: {
       labels: labels,
@@ -213,4 +228,5 @@ function drawGraph(graphData) {
       },
     },
   });
+  return chart;
 }
