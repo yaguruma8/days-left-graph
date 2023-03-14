@@ -1,5 +1,9 @@
 'use strict';
+
+// -----------------------------------------------
 // 定数
+// -----------------------------------------------
+
 // グラフの色
 // 参考 : https://iro-color.com/colorchart/tone/vivid-tone.html
 const BG_COLORS = {
@@ -17,7 +21,14 @@ const BG_COLORS = {
   12: { past: '#FADBDA', left: '#E9546B' },
 };
 
-// 日数表示の生成と描画
+// -----------------------------------------------
+// メインロジック
+// -----------------------------------------------
+
+/**
+ * テキストの描画
+ * @param {Date} date
+ */
 const printDates = (date) => {
   // 経過日数
   const pastDaysString = String(getPastDays(date));
@@ -38,7 +49,11 @@ const printDates = (date) => {
     `;
 };
 
-// グラフデータの生成と描画
+/**
+ * グラフデータの生成と描画（クロージャ）
+ * @param {Date} date
+ * @returns {Function} グラフを描画する
+ */
 const printGraphClosure = (date) => {
   let today = date;
   const graphData = createGraphData(today);
