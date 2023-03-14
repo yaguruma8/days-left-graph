@@ -21,6 +21,9 @@ const BG_COLORS = {
   12: { past: '#FADBDA', left: '#E9546B' },
 };
 
+// テキストの%表示の小数点以下の桁数
+const PERCENT_FIXED_NUM = 5;
+
 // -----------------------------------------------
 // メインロジック
 // -----------------------------------------------
@@ -104,7 +107,7 @@ function getThisYearDays(date) {
 function getPastDays(date) {
   const beginDate = new Date(date.getFullYear(), 0, 0);
   const pastMS = date - beginDate;
-  return Math.floor(pastMS / 1000 / 60 / 60 / 24);
+  return Math.floor(pastMS / (1000 * 60 * 60 * 24));
 }
 
 /**
@@ -114,8 +117,8 @@ function getPastDays(date) {
  */
 function getPastPerString(date) {
   const pastMS = date - new Date(date.getFullYear(), 0, 0);
-  const fullMS = getThisYearDays(date) * 24 * 60 * 60 * 1000;
-  return ((pastMS / fullMS) * 100).toFixed(5);
+  const fullMS = getThisYearDays(date) * (1000 * 60 * 60 * 24);
+  return ((pastMS / fullMS) * 100).toFixed(PERCENT_FIXED_NUM);
 }
 
 /**
@@ -157,7 +160,7 @@ function getLeftTimeString(leftDays, leftTime) {
  * @returns {string} 残り%
  */
 function getLeftPerString(date) {
-  return (100 - Number(getPastPerString(date))).toFixed(5);
+  return (100 - Number(getPastPerString(date))).toFixed(PERCENT_FIXED_NUM);
 }
 
 // -----------------------------------------------
