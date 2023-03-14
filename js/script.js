@@ -42,14 +42,14 @@ const printDates = (date) => {
 const printGraphClosure = (date) => {
   let today = date;
   const graphData = createGraphData(today);
-  let chart = drawGraph(graphData);
+  let canvas = drawGraph(graphData);
   return (date) => {
     // 日付が変わった場合todayをdateで上書きしてグラフを再描画する
     if (today.getDate() !== date.getDate()) {
       today = date;
       const graphData = createGraphData(today);
-      chart.destroy();
-      chart = drawGraph(graphData);
+      canvas.remove();
+      canvas = drawGraph(graphData);
     }
   };
 };
@@ -184,13 +184,14 @@ function createGraphData(date) {
 /**
  * グラフを描画する
  * @param {object} graphData
- * @returns {Chart} chartオブジェクト
+ * @returns {HTMLElement} canvas
  */
 function drawGraph(graphData) {
   const { labels, data, backgroundColors } = graphData;
-  const ctx = document.getElementById('chart');
+  const canvas = document.createElement('canvas');
+  document.querySelector('#chartContainer').appendChild(canvas);
   // chart.js
-  const chart = new Chart(ctx, {
+  new Chart(canvas, {
     type: 'doughnut',
     data: {
       labels: labels,
@@ -213,5 +214,5 @@ function drawGraph(graphData) {
       },
     },
   });
-  return chart;
+  return canvas;
 }
